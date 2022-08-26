@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'flutter_chess_app.dart';
+import 'app.dart';
 
 void main() {
-  runApp(const FlutterChessApp());
+  runApp(const App());
 }
