@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'router/router.dart';
 
 class App extends StatelessWidget {
-  const App({super.key});
+  App({super.key});
 
-  final router = const AppRouter();
+  final router = AppRouter();
 
   // This widget is the root of your application.
   @override

@@ -28,13 +28,13 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   chess: ^0.7.0
-  auto_route: [latest-version]
+  auto_route: ^5.0.1
 
   flutter:
     sdk: flutter
 
 dev_dependencies:
-  auto_route_generator: [latest-version]
+  auto_route_generator: ^5.0.1
   build_runner:
 
   flutter_test:
