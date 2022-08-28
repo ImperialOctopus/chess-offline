@@ -17,19 +17,35 @@ class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    MenuRoute.name: (routeData) {
+      return MaterialPageX<void>(routeData: routeData, child: const MenuPage());
+    },
     GameRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(routeData: routeData, child: GamePage());
+      return MaterialPageX<void>(routeData: routeData, child: const GamePage());
     }
   };
 
   @override
-  List<RouteConfig> get routes => [RouteConfig(GameRoute.name, path: '/')];
+  List<RouteConfig> get routes => [
+        RouteConfig('/#redirect',
+            path: '/', redirectTo: '/menu', fullMatch: true),
+        RouteConfig(MenuRoute.name, path: '/menu'),
+        RouteConfig(GameRoute.name, path: '/game')
+      ];
+}
+
+/// generated route for
+/// [MenuPage]
+class MenuRoute extends PageRouteInfo<void> {
+  const MenuRoute() : super(MenuRoute.name, path: '/menu');
+
+  static const String name = 'MenuRoute';
 }
 
 /// generated route for
 /// [GamePage]
 class GameRoute extends PageRouteInfo<void> {
-  const GameRoute() : super(GameRoute.name, path: '/');
+  const GameRoute() : super(GameRoute.name, path: '/game');
 
   static const String name = 'GameRoute';
 }
