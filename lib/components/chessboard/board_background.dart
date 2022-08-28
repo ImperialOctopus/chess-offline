@@ -12,7 +12,7 @@ class BoardBackground extends StatelessWidget {
       gridDelegate:
           const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 8),
       itemBuilder: (context, index) {
-        if ((index + index ~/ 8).isEven) {
+        if ((index + index ~/ 8).isOdd) {
           // Black square
           return Container(color: theme.blackColour);
         } else {
