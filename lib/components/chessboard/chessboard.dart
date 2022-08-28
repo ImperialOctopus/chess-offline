@@ -66,15 +66,29 @@ class _ChessboardState extends State<Chessboard> {
 
                   return DragTarget<PieceMoveData>(
                     builder: (context, list, _) => pieceOnSquare != null
-                        ? Draggable<PieceMoveData>(
-                            feedback: ChessPiece(piece: pieceOnSquare),
-                            childWhenDragging: const SizedBox(),
-                            data: PieceMoveData(
-                              squareName: squareName,
-                              pieceType: pieceOnSquare.type,
-                              pieceColor: pieceOnSquare.color,
+                        ? LayoutBuilder(
+                            builder: (context, constraints) =>
+                                Draggable<PieceMoveData>(
+                              feedback: SizedBox(
+                                height: constraints.maxHeight,
+                                width: constraints.maxWidth,
+                                child: ChessPiece(piece: pieceOnSquare),
+                              ),
+                              childWhenDragging: SizedBox(
+                                height: constraints.maxHeight,
+                                width: constraints.maxWidth,
+                              ),
+                              data: PieceMoveData(
+                                squareName: squareName,
+                                pieceType: pieceOnSquare.type,
+                                pieceColor: pieceOnSquare.color,
+                              ),
+                              child: SizedBox(
+                                height: constraints.maxHeight,
+                                width: constraints.maxWidth,
+                                child: ChessPiece(piece: pieceOnSquare),
+                              ),
                             ),
-                            child: ChessPiece(piece: pieceOnSquare),
                           )
                         : Container(),
                     onWillAccept: (pieceMoveData) =>
