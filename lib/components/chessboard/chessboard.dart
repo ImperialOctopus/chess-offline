@@ -24,13 +24,11 @@ class Chessboard extends StatefulWidget {
 
   Chessboard({
     super.key,
-    Chess? gameState,
+    ChessboardController? controller,
     this.enableUserMoves = true,
     this.boardTheme = BoardTheme.simpleAndClean,
     this.boardOrientation = Color.WHITE,
-  }) : controller = gameState == null
-            ? ChessboardController()
-            : ChessboardController.fromGame(gameState);
+  }) : controller = controller ?? ChessboardController();
 
   @override
   State<Chessboard> createState() => _ChessboardState();
