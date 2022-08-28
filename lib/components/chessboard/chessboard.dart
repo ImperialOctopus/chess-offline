@@ -2,7 +2,6 @@ import 'package:chess/chess.dart' hide State;
 import 'package:flutter/material.dart' hide Color;
 import 'package:flutter_chess/components/chessboard/board_background.dart';
 
-import '../../constants/constants.dart';
 import 'board_theme.dart';
 import 'chess_piece.dart';
 import 'chessboard_controller.dart';
@@ -20,6 +19,8 @@ class Chessboard extends StatefulWidget {
   final BoardTheme boardTheme;
 
   final Color boardOrientation;
+
+  static const List<String> files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
   Chessboard({
     super.key,
@@ -57,8 +58,8 @@ class _ChessboardState extends State<Chessboard> {
                           : (7 - row) + 1)
                       .toString();
                   String boardFile = widget.boardOrientation == Color.WHITE
-                      ? files[column]
-                      : files[7 - column];
+                      ? Chessboard.files[column]
+                      : Chessboard.files[7 - column];
 
                   String squareName = boardFile + boardRank;
                   Piece? pieceOnSquare = game.get(squareName);
