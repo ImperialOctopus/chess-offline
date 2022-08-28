@@ -12,6 +12,16 @@ class ChessPiece extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return FittedBox(
+      fit: BoxFit.fill,
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: icon,
+      ),
+    );
+  }
+
+  Widget get icon {
     if (piece.color == Color.WHITE) {
       if (piece.type == PieceType.PAWN) {
         return const FaIcon(FontAwesomeIcons.chessPawn);
