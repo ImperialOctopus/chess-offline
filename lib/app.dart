@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chess/theme.dart';
 
 import 'router/router.dart';
 
@@ -12,7 +13,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Flutter Demo',
-      theme: ThemeData.light(),
+      theme: themeData,
       routerDelegate: router.delegate(),
       routeInformationParser: router.defaultRouteParser(),
     );

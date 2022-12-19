@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chess/components/chessboard/chessboard.dart';
+import 'package:flutter_chess/components/chessboard/chessboard_new.dart';
 
 import '../components/chessboard/chessboard_controller.dart';
 
@@ -16,6 +16,7 @@ class _GamePageState extends State<GamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: OrientationBuilder(
         builder: (context, orientation) => orientation == Orientation.landscape
             ? Row(
