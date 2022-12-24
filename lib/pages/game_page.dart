@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chess/components/chessboard/chessboard_new.dart';
+import 'package:flutter_chess/model/board_state.dart';
+import 'package:flutter_chess/model/board_state_controller.dart';
 
-import '../components/chessboard/chessboard_controller.dart';
+import '../components/chessboard/chessboard.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -11,39 +12,47 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  final controller = ChessboardController();
+  bool flipBoard = false;
+  final BoardStateController controller =
+      BoardStateController(BoardState.starting);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: OrientationBuilder(
-        builder: (context, orientation) => orientation == Orientation.landscape
-            ? Row(
-                children: [
-                  _buildChessboard(),
-                  Expanded(
-                    child: _buildSidebar(),
-                  ),
-                ],
-              )
-            : Column(
-                children: [
-                  _buildChessboard(),
-                  Expanded(
-                    child: _buildSidebar(),
-                  ),
-                ],
+      body: Stack(
+        children: [
+          Center(
+              child: Chessboard(controller: controller, flipBoard: flipBoard)),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.close),
+                iconSize: 48,
+                onPressed: () => Navigator.of(context).pop(),
               ),
+              IconButton(
+                icon: const Icon(Icons.screen_rotation_alt_rounded),
+                iconSize: 48,
+                onPressed: () {
+                  setState(() {
+                    flipBoard = !flipBoard;
+                  });
+                },
+              ),
+              ValueListenableBuilder<BoardState>(
+                valueListenable: controller,
+                builder: (context, _, __) => IconButton(
+                  icon: const Icon(Icons.undo),
+                  iconSize: 48,
+                  onPressed:
+                      controller.canUndo ? () => controller.undo() : null,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
-  }
-
-  Widget _buildChessboard() {
-    return Chessboard(controller: controller);
-  }
-
-  Widget _buildSidebar() {
-    return const Center(child: Text('Sidebar'));
   }
 }

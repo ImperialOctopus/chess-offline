@@ -1,34 +1,38 @@
-import 'package:chess/chess.dart' hide State;
-import 'package:flutter/material.dart' hide Color;
-import 'package:flutter_chess/components/chessboard/board_background.dart';
+import 'package:flutter/material.dart';
 
-import 'board_theme.dart';
-import 'chess_piece.dart';
-import 'chessboard_controller.dart';
-import '../../model/piece_move_data.dart';
+import 'board_background.dart';
+import 'piece_widget.dart';
+import '../../model/board_state_controller.dart';
+import '../../model/board_location.dart';
+import '../../model/board_state.dart';
+import '../../model/piece.dart';
+import '../../theme/board_theme.dart';
 
 class Chessboard extends StatefulWidget {
-  /// An instance of [ChessboardController] which holds the game and allows
-  /// manipulating the board programmatically.
-  final ChessboardController controller;
-
-  /// A boolean which checks if the user should be allowed to make moves
-  final bool enableUserMoves;
-
   /// The color type of the board
   final BoardTheme boardTheme;
 
-  final Color boardOrientation;
+  final bool flipBoard;
 
-  static const List<String> files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+  final BoardStateController controller;
 
-  Chessboard({
+  static const List<String> fileLabels = [
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+    'g',
+    'h'
+  ];
+
+  const Chessboard({
     super.key,
-    ChessboardController? controller,
-    this.enableUserMoves = true,
+    required this.controller,
     this.boardTheme = BoardTheme.simpleAndClean,
-    this.boardOrientation = Color.WHITE,
-  }) : controller = controller ?? ChessboardController();
+    this.flipBoard = false,
+  });
 
   @override
   State<Chessboard> createState() => _ChessboardState();
@@ -37,9 +41,9 @@ class Chessboard extends StatefulWidget {
 class _ChessboardState extends State<Chessboard> {
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<Chess>(
+    return ValueListenableBuilder<BoardState>(
       valueListenable: widget.controller,
-      builder: (context, game, _) {
+      builder: (context, boardState, _) {
         return AspectRatio(
           aspectRatio: 1,
           child: Stack(
@@ -49,72 +53,84 @@ class _ChessboardState extends State<Chessboard> {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 8),
                 itemBuilder: (context, index) {
-                  var row = index ~/ 8;
-                  var column = index % 8;
-                  String boardRank = (widget.boardOrientation == Color.BLACK
-                          ? row + 1
-                          : (7 - row) + 1)
-                      .toString();
-                  String boardFile = widget.boardOrientation == Color.WHITE
-                      ? Chessboard.files[column]
-                      : Chessboard.files[7 - column];
+                  int x = index % 8;
+                  int y = index ~/ 8;
 
-                  String squareName = boardFile + boardRank;
-                  Piece? pieceOnSquare = game.get(squareName);
+                  if (widget.flipBoard) {
+                    x = 7 - x;
+                    y = 7 - y;
+                  }
 
-                  return DragTarget<PieceMoveData>(
+                  final location = BoardLocation(x, y);
+
+                  Piece? pieceOnSquare = boardState.getPiece(location);
+
+                  return DragTarget<BoardLocation>(
                     builder: (context, list, _) => pieceOnSquare != null
                         ? LayoutBuilder(
                             builder: (context, constraints) =>
-                                Draggable<PieceMoveData>(
+                                Draggable<BoardLocation>(
                               feedback: SizedBox(
                                 height: constraints.maxHeight,
                                 width: constraints.maxWidth,
-                                child: ChessPiece(piece: pieceOnSquare),
+                                child: PieceWidget(piece: pieceOnSquare),
                               ),
                               childWhenDragging: SizedBox(
                                 height: constraints.maxHeight,
                                 width: constraints.maxWidth,
                               ),
-                              data: PieceMoveData(
-                                squareName: squareName,
-                                pieceType: pieceOnSquare.type,
-                                pieceColor: pieceOnSquare.color,
-                              ),
+                              data: location,
+                              onDraggableCanceled: (_, __) => widget.controller
+                                  .deletePiece(location: location),
                               child: SizedBox(
                                 height: constraints.maxHeight,
                                 width: constraints.maxWidth,
-                                child: ChessPiece(piece: pieceOnSquare),
+                                child: PieceWidget(piece: pieceOnSquare),
                               ),
                             ),
                           )
-                        : Container(),
-                    onWillAccept: (pieceMoveData) =>
-                        widget.enableUserMoves ? true : false,
-                    onAccept: (PieceMoveData pieceMoveData) async {
-                      if (pieceMoveData.pieceType == PieceType.PAWN &&
-                          ((pieceMoveData.squareName[1] == "7" &&
-                                  squareName[1] == "8" &&
-                                  pieceMoveData.pieceColor == Color.WHITE) ||
-                              (pieceMoveData.squareName[1] == "2" &&
-                                  squareName[1] == "1" &&
-                                  pieceMoveData.pieceColor == Color.BLACK))) {
-                        final promoteTo = await _promotionDialog(
-                            context, pieceMoveData.pieceColor);
+                        : GestureDetector(
+                            onLongPress: () async {
+                              final piece = await _createDialog(context);
+
+                              if (piece == null) {
+                                return;
+                              } else {
+                                widget.controller.createPiece(
+                                  piece: piece,
+                                  location: location,
+                                );
+                              }
+                            },
+                          ),
+                    onAccept: (BoardLocation origin) async {
+                      if (origin == location) {
+                        return;
+                      }
+
+                      final pieceMoving = boardState.getPiece(origin);
+
+                      if ((pieceMoving?.type == PieceType.pawn) &&
+                          ((pieceMoving?.color == PieceColor.white &&
+                                  location.y == 0) ||
+                              (pieceMoving?.color == PieceColor.black &&
+                                  location.y == 7))) {
+                        final promoteTo =
+                            await _promotionDialog(context, pieceMoving!.color);
 
                         if (promoteTo == null) {
                           return;
                         } else {
                           widget.controller.makeMoveWithPromotion(
-                            from: pieceMoveData.squareName,
-                            to: squareName,
-                            pieceToPromoteTo: promoteTo,
+                            origin: origin,
+                            destination: location,
+                            promoteTo: promoteTo.type,
                           );
                         }
                       } else {
                         widget.controller.makeMove(
-                          from: pieceMoveData.squareName,
-                          to: squareName,
+                          origin: origin,
+                          destination: location,
                         );
                       }
                     },
@@ -132,42 +148,79 @@ class _ChessboardState extends State<Chessboard> {
   }
 
   /// Show dialog when pawn reaches last square
-  Future<String?> _promotionDialog(BuildContext context, Color color) async {
-    return showDialog<String>(
+  Future<Piece?> _promotionDialog(
+      BuildContext context, PieceColor color) async {
+    return showDialog<Piece>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Choose promotion'),
+          title: const Text('promotion'),
           content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              InkWell(
-                child: ChessPiece(piece: Piece(PieceType.QUEEN, color)),
-                onTap: () {
-                  Navigator.of(context).pop("q");
-                },
-              ),
-              InkWell(
-                child: ChessPiece(piece: Piece(PieceType.ROOK, color)),
-                onTap: () {
-                  Navigator.of(context).pop("r");
-                },
-              ),
-              InkWell(
-                child: ChessPiece(piece: Piece(PieceType.BISHOP, color)),
-                onTap: () {
-                  Navigator.of(context).pop("b");
-                },
-              ),
-              InkWell(
-                child: ChessPiece(piece: Piece(PieceType.KNIGHT, color)),
-                onTap: () {
-                  Navigator.of(context).pop("n");
-                },
-              ),
-            ],
-          ),
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                PieceType.queen,
+                PieceType.bishop,
+                PieceType.knight,
+                PieceType.rook,
+              ].map((pieceType) {
+                return SizedBox(
+                  height: 64,
+                  width: 64,
+                  child: InkWell(
+                    child: PieceWidget(
+                      piece: Piece(color, pieceType),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop(Piece(color, pieceType));
+                    },
+                  ),
+                );
+              }).toList()),
+        );
+      },
+    );
+  }
+
+  /// Show dialog when create piece button is pressed
+  Future<Piece?> _createDialog(BuildContext context) async {
+    return showDialog<Piece>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('create'),
+          content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PieceColor.white,
+                PieceColor.black,
+              ].map((pieceColor) {
+                return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      PieceType.king,
+                      PieceType.queen,
+                      PieceType.bishop,
+                      PieceType.knight,
+                      PieceType.rook,
+                      PieceType.pawn,
+                    ].map((pieceType) {
+                      return SizedBox(
+                        height: 64,
+                        width: 64,
+                        child: InkWell(
+                          child: PieceWidget(
+                            piece: Piece(pieceColor, pieceType),
+                          ),
+                          onTap: () {
+                            Navigator.of(context)
+                                .pop(Piece(pieceColor, pieceType));
+                          },
+                        ),
+                      );
+                    }).toList());
+              }).toList()),
         );
       },
     );

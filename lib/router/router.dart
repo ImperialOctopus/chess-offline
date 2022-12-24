@@ -9,7 +9,7 @@ part 'router.gr.dart';
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
-    AutoRoute<void>(path: '/menu', page: MenuPage, initial: true),
+    AutoRoute<void>(path: '/', page: MenuPage, initial: true),
     AutoRoute<void>(path: '/game', page: GamePage),
   ],
 )

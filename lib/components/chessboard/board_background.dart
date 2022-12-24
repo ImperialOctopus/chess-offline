@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chess/components/chessboard/board_theme.dart';
+import 'package:flutter_chess/theme/board_theme.dart';
 
 class BoardBackground extends StatelessWidget {
   final BoardTheme theme;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chess/theme.dart';
+import 'package:flutter_chess/theme/theme.dart';
 
 import 'router/router.dart';
 
