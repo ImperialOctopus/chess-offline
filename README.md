@@ -26,3 +26,9 @@ I haven't built this for any other platforms, but in theory it should work on al
 or specify which platforms to add:
 
     flutter create . --platforms ios,android,windows,linux,macos,web
+
+and then run the build:
+
+    flutter build linux
+
+I haven't tried it but be aware that the AudioPlayers getting started guide specifies some prerequisites for linux only: https://github.com/bluefireteam/audioplayers/blob/main/packages/audioplayers_linux/requirements.md#requirements-for-linux
