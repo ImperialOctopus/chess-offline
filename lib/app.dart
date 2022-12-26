@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chess/services/audio_service.dart';
-import 'package:flutter_chess/services/audioplayers_audio_service.dart';
-import 'package:flutter_chess/theme/theme.dart';
+import 'package:chess_offline/services/audio_service.dart';
+import 'package:chess_offline/services/audioplayers_audio_service.dart';
+import 'package:chess_offline/theme/theme.dart';
 import 'package:provider/provider.dart';
 
 import 'router/router.dart';

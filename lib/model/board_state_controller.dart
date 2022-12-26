@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_chess/model/board_location.dart';
-import 'package:flutter_chess/model/move_result.dart';
-import 'package:flutter_chess/model/piece.dart';
+import 'package:chess_offline/model/board_location.dart';
+import 'package:chess_offline/model/move_result.dart';
+import 'package:chess_offline/model/piece.dart';
 
 import 'board_state.dart';
 

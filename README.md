@@ -1,1 +1,1 @@
-# flutter_chess
+# chess_offline

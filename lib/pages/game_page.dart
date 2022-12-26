@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chess/model/board_state.dart';
-import 'package:flutter_chess/model/board_state_controller.dart';
-import 'package:flutter_chess/services/audio_service.dart';
+import 'package:chess_offline/model/board_state.dart';
+import 'package:chess_offline/model/board_state_controller.dart';
+import 'package:chess_offline/services/audio_service.dart';
 import 'package:provider/provider.dart';
 
 import '../components/chessboard/chessboard.dart';

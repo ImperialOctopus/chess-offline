@@ -13,7 +13,8 @@ class MenuPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('"chess"', style: Theme.of(context).textTheme.headlineLarge),
+            Text('chess offline',
+                style: Theme.of(context).textTheme.headlineLarge),
             const SizedBox(height: 64),
             ElevatedButton(
               onPressed: () => AutoRouter.of(context).push(const GameRoute()),

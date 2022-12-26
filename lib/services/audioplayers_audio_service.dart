@@ -1,5 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter_chess/services/audio_service.dart';
+import 'package:chess_offline/services/audio_service.dart';
 
 class AudioplayersAudioService implements AudioService {
   static const volume = 0.2;

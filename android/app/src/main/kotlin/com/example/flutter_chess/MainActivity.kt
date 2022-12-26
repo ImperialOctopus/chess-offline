@@ -1,4 +1,4 @@
-package com.example.flutter_chess
+package com.example.chess_offline
 
 import io.flutter.embedding.android.FlutterActivity
 

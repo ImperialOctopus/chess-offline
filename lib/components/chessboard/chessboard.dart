@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chess/services/audio_service.dart';
+import 'package:chess_offline/services/audio_service.dart';
 import 'package:provider/provider.dart';
 
 import 'board_background.dart';
