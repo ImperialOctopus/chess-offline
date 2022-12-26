@@ -1,21 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chess/services/audio_service.dart';
+import 'package:flutter_chess/services/audioplayers_audio_service.dart';
 import 'package:flutter_chess/theme/theme.dart';
+import 'package:provider/provider.dart';
 
 import 'router/router.dart';
 
-class App extends StatelessWidget {
-  App({super.key});
+class App extends StatefulWidget {
+  const App({super.key});
 
-  final router = AppRouter();
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  late final AppRouter router;
+
+  @override
+  void initState() {
+    router = AppRouter();
+
+    super.initState();
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Flutter Demo',
-      theme: themeData,
-      routerDelegate: router.delegate(),
-      routeInformationParser: router.defaultRouteParser(),
+    return Provider<AudioService>(
+      create: (_) => AudioplayersAudioService(),
+      child: MaterialApp.router(
+        title: 'Flutter Demo',
+        theme: themeData,
+        routerDelegate: router.delegate(),
+        routeInformationParser: router.defaultRouteParser(),
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chess/model/board_location.dart';
+import 'package:flutter_chess/model/move_result.dart';
 import 'package:flutter_chess/model/piece.dart';
 
 import 'board_state.dart';
@@ -34,7 +35,7 @@ class BoardStateController
     _update((state) => state.setPiece(location, null));
   }
 
-  void makeMoveWithPromotion({
+  MoveResult makeMoveWithPromotion({
     required BoardLocation origin,
     required BoardLocation destination,
     required PieceType promoteTo,
@@ -48,15 +49,17 @@ class BoardStateController
       _update((state) => state
           .setPiece(origin, destinationPiece)
           .setPiece(destination, Piece(originPiece.color, promoteTo)));
+      return const MoveResult(pieceCaptured: false);
     } else {
       // replace
       _update((state) => state
           .setPiece(origin, null)
           .setPiece(destination, Piece(originPiece.color, promoteTo)));
+      return MoveResult(pieceCaptured: (destinationPiece != null));
     }
   }
 
-  void makeMove({
+  MoveResult makeMove({
     required BoardLocation origin,
     required BoardLocation destination,
   }) {
@@ -69,10 +72,12 @@ class BoardStateController
       _update((state) => state
           .setPiece(origin, destinationPiece)
           .setPiece(destination, originPiece));
+      return const MoveResult(pieceCaptured: false);
     } else {
       // replace
       _update((state) =>
           state.setPiece(origin, null).setPiece(destination, originPiece));
+      return MoveResult(pieceCaptured: (destinationPiece != null));
     }
   }
 

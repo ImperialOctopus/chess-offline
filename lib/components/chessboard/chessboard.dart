@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chess/services/audio_service.dart';
+import 'package:provider/provider.dart';
 
 import 'board_background.dart';
 import 'piece_widget.dart';
@@ -41,6 +43,8 @@ class Chessboard extends StatefulWidget {
 class _ChessboardState extends State<Chessboard> {
   @override
   Widget build(BuildContext context) {
+    final audioService = Provider.of<AudioService>(context, listen: false);
+
     return ValueListenableBuilder<BoardState>(
       valueListenable: widget.controller,
       builder: (context, boardState, _) {
@@ -80,8 +84,12 @@ class _ChessboardState extends State<Chessboard> {
                                 width: constraints.maxWidth,
                               ),
                               data: location,
-                              onDraggableCanceled: (_, __) => widget.controller
-                                  .deletePiece(location: location),
+                              onDraggableCanceled: (_, __) {
+                                widget.controller
+                                    .deletePiece(location: location);
+                                audioService
+                                    .playSound(AudioServiceSound.capture);
+                              },
                               child: SizedBox(
                                 height: constraints.maxHeight,
                                 width: constraints.maxWidth,
@@ -100,6 +108,7 @@ class _ChessboardState extends State<Chessboard> {
                                   piece: piece,
                                   location: location,
                                 );
+                                audioService.playSound(AudioServiceSound.move);
                               }
                             },
                           ),
@@ -121,17 +130,27 @@ class _ChessboardState extends State<Chessboard> {
                         if (promoteTo == null) {
                           return;
                         } else {
-                          widget.controller.makeMoveWithPromotion(
+                          final result =
+                              widget.controller.makeMoveWithPromotion(
                             origin: origin,
                             destination: location,
                             promoteTo: promoteTo.type,
                           );
+                          result.pieceCaptured
+                              ? audioService
+                                  .playSound(AudioServiceSound.capture)
+                              : audioService.playSound(AudioServiceSound.move);
+                          return;
                         }
                       } else {
-                        widget.controller.makeMove(
+                        final result = widget.controller.makeMove(
                           origin: origin,
                           destination: location,
                         );
+                        result.pieceCaptured
+                            ? audioService.playSound(AudioServiceSound.capture)
+                            : audioService.playSound(AudioServiceSound.move);
+                        return;
                       }
                     },
                   );

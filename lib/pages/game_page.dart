@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chess/model/board_state.dart';
 import 'package:flutter_chess/model/board_state_controller.dart';
+import 'package:flutter_chess/services/audio_service.dart';
+import 'package:provider/provider.dart';
 
 import '../components/chessboard/chessboard.dart';
 
@@ -18,6 +20,8 @@ class _GamePageState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
+    final audioService = Provider.of<AudioService>(context);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -35,6 +39,7 @@ class _GamePageState extends State<GamePage> {
                 icon: const Icon(Icons.screen_rotation_alt_rounded),
                 iconSize: 48,
                 onPressed: () {
+                  audioService.playSound(AudioServiceSound.flip);
                   setState(() {
                     flipBoard = !flipBoard;
                   });
@@ -45,8 +50,12 @@ class _GamePageState extends State<GamePage> {
                 builder: (context, _, __) => IconButton(
                   icon: const Icon(Icons.undo),
                   iconSize: 48,
-                  onPressed:
-                      controller.canUndo ? () => controller.undo() : null,
+                  onPressed: controller.canUndo
+                      ? () {
+                          audioService.playSound(AudioServiceSound.undo);
+                          controller.undo();
+                        }
+                      : null,
                 ),
               ),
             ],
