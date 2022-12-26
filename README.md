@@ -1,4 +1,4 @@
-# chess_offline
+# Chess Offline
 
 Cross-platform chess app for two people to play chess locally.
 
